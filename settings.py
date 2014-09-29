@@ -18,7 +18,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
-DB_CONNECT_STRING = 'mysql+mysqldb://root:@localhost/jm_waf?charset=utf8'
+DB_CONNECT_STRING = 'mysql+mysqldb://root:voilet@localhost/jm_waf?charset=utf8'
 engine = create_engine(DB_CONNECT_STRING, echo=True)
 DB_Session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,

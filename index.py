@@ -71,7 +71,7 @@ class MainHeandler(BaseHandle):
         """
         # name = tornado.escape.xhtml_escape(self.current_user)   #读取session，验证是否登录
 
-        test = self.session.query(Hack).all()
+        # test = self.session.query(Hack).all()
         # print test.id
 
         iterm = []

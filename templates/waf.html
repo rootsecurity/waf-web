@@ -5,6 +5,8 @@
     <title>ECharts</title>
     <!--Step:1 引入一个模块加载器，如esl.js或者require.js-->
     <script src="/static/js/echarts/js/esl.js"></script>
+    <script src="/static/js/echarts/js/echarts-map.js"></script>
+    <script src="/static/js/echarts/js/echarts.js"></script>
 
 </head>
 
@@ -18,15 +20,29 @@
 
         require.config({
             paths:{
-                'echarts': fileLocation,
+                'echarts/chart/line': fileLocation,
+                'echarts/chart/bar': fileLocation,
+                'echarts/chart/scatter': fileLocation,
+                'echarts/chart/k': fileLocation,
+                'echarts/chart/pie': fileLocation,
+                'echarts/chart/radar': fileLocation,
                 'echarts/chart/map': fileLocation,
+                'echarts/chart/chord': fileLocation,
+                'echarts/chart/force': fileLocation
             }
         });
         var myChart;
         require(
             [
                 'echarts',
-                'echarts/chart/map'
+                'echarts/chart/line',
+                'echarts/chart/bar',
+                'echarts/chart/scatter',
+                'echarts/chart/k',
+                'echarts/chart/pie',
+                'echarts/chart/radar',
+                'echarts/chart/force',
+                'echarts/chart/chord',
             ],
             function(ec) {
 

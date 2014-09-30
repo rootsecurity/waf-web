@@ -19,13 +19,17 @@ import re
 
 import requests
 import tornado.websocket
-
+import datetime
+from datetime import timedelta
+import jm_waf.atk_type
 # import api.QQWry
 from api.QQWry import *
 
 #初始化ip库
 tt = IPSearch('api/QQWry.Dat')
 
+
+bypass_ip = ["114.80.80.8"]
 
 from settings import engine, DB_Session
 from jm_waf.models import Hack
@@ -56,7 +60,7 @@ class WeiboHandler(BaseHandle):
     @tornado.web.authenticated
     def post(self):
         """接收发送数据并入库"""
-        result = self.get_argument("content",None)
+        result = self.get_argument("content", None)
 
         # db.weibo.insert({"content": result, "user": self.get_current_user()})
         self.write(result)
@@ -70,13 +74,46 @@ class MainHeandler(BaseHandle):
         首页渲染数据
         """
         # name = tornado.escape.xhtml_escape(self.current_user)   #读取session，验证是否登录
+        date1 = datetime.datetime.now()
+        last_week_end_dt = str(date1-datetime.timedelta(days=date1.weekday()+1)).split()[0]
+        last_week_start_dt = str(date1-datetime.timedelta(days=date1.weekday()+7)).split()[0]
+        start_time = '%s 00:00:00' % (last_week_end_dt)
+        stop_time = '%s 00:00:00' % (last_week_start_dt)
+        # start_old_time = timedelta(hours=-1)
+        # old_time = (date1+start_old_time).strftime("%H:%M").split(":")
+        # new_time = date1.strftime("%H:%M").split(":")
 
-        # test = self.session.query(Hack).all()
-        # print test.id
+        # line_start_list = []
+        # line_stop_list = []
+        #
+        # for i in range(int(old_time[1]), 61):
+        #     line_start_list.append(i)
+        # for i in range(0, int(new_time[1]) + 1):
+        #     line_stop_list.append(i)
 
-        iterm = []
-        # self.render("weibo_list.html", content=iterm)
-        self.render("waf.html", content=iterm)
+
+
+        # test = self.session.query(Hack).filter(Hack.src_time >= start_time, Hack.src_time <= '2014-09-09 23:59:59')
+        test = self.session.query(Hack).filter(Hack.src_time >= start_time, Hack.src_time <= stop_time)
+        pie_data = []
+        pie_count = {}
+        for i in jm_waf.atk_type.atk.keys():
+            for at in test:
+
+                if at.acl in i:
+                    if at.ip in bypass_ip:
+                        pie_data.append("pachong")
+
+                    else:
+                        pie_data.append(jm_waf.atk_type.atk[i])
+        for i in pie_data:
+            if pie_data.count(i)>1:
+                pie_count[i] = pie_data.count(i)
+        # for i in pie_count.keys():
+        #     print i, pie_count[i]
+        self.render("waf_pie.html", pie_count=pie_count)
+        # self.render("waf_line.html", line_start_list=line_start_list, line_stop_list=line_stop_list, start_time=old_time[0], stop_time=new_time[0])
+
         # for i in test:
         #     # print i.ip
         #     s = "https://www.maxmind.com/geoip/v2.1/city/%s?demo=1" %(i.ip)
